@@ -1,0 +1,29 @@
+ import { HorizontalBox, VerticalBox, ComboBox, ScrollView } from "std-widgets.slint";
+
+export component MainWindow inherits Window {
+    in property original-image <=> original.source;
+
+    pure callback filter-image(int) -> image;
+
+    title: "Slint Image Filter Integration Example";
+    preferred-width: 800px;
+    preferred-height: 600px;
+
+    HorizontalBox {
+        VerticalBox {
+            Text {
+                font-size: 20px;
+                text: "Original Image";
+                horizontal-alignment: center;
+            }
+          ScrollView {
+//image-fit: preserve; for original size
+        //scrollview's viewport-width and height needed for scroll to appear
+            viewport-width: original.source.width * 1px;
+            viewport-height: original.source.height * 1px;
+            original := Image { image-fit: preserve; }
+        }
+            
+        }
+    }
+}
