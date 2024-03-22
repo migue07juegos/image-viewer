@@ -1,8 +1,8 @@
- import { HorizontalBox, VerticalBox, ComboBox, ScrollView, Button } from "std-widgets.slint";
+import { HorizontalBox, VerticalBox, ComboBox, ScrollView, Button } from "std-widgets.slint";
 
 export component MainWindow inherits Window {
-    in property original-image <=> original.source;
-    in property <int> image-size: 0;
+    in property <image> image-data;
+    out property <int> image-size: 0;
 
     title: "Slint Image Filter Integration Example";
     preferred-width: 800px;
@@ -13,21 +13,32 @@ export component MainWindow inherits Window {
             HorizontalBox {
                 Button {
                     text: "Original size";
+                    clicked => {
+                        image-size = 0;
+                    }
                 }
 
                 Button {
                     text: "Fit to window";
+                    clicked => {
+                        image-size = 1;
+                    }
                 }
             }
 
-            Flickable {
+            if (image-size == 1): Flickable {
                 //image-fit: preserve; for original size
             //scrollview's viewport-width and height needed for scroll to appear
-            viewport-width: original.source.width * 1px;
-                viewport-height: original.source.height * 1px;
-                original := Image {
+            viewport-width: image-data.width * 1px;
+                viewport-height: image-data.height * 1px;
+                Image {
+                    source: image-data;
                     image-fit: preserve;
                 }
+            }
+            if (image-size == 0): Image {
+                source: image-data;
+                image-fit: contain;
             }
         }
     }

@@ -15,7 +15,7 @@ fn main() -> Result<(), slint::PlatformError> {
     //         source_image.height(),
     //     ),
     // ));
-    ui.set_original_image(slint::Image::load_from_path(&image_path).unwrap());
+    ui.set_image_data(slint::Image::load_from_path(&image_path).unwrap());
 
     ui.run()
 }
