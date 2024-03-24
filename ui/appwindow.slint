@@ -4,6 +4,9 @@ export component MainWindow inherits Window {
     in property <image> image-data;
     out property <int> image-size: 0;
     in-out property <float> scale: 1;
+    private property <length> image-width-scaled: image-data.width * scale * 1px;
+    private property <length> image-height-scaled: image-data.height * scale * 1px;
+
     // chamge later to in or to out
    
     title: "Slint Image Filter Integration Example";
@@ -28,24 +31,24 @@ export component MainWindow inherits Window {
         }
 
         if (image-size == 1): HorizontalBox {
-            // padding-left: (parent.width > image-data.width * 1px) ? (parent.width - image-data.width * 1px) / 2 : 0px;
+            padding-left: (parent.width > image-width-scaled) ? (parent.width - image-width-scaled) / 2 : 0px;
             Flickable {
-                viewport-width: image-data.width * scale * 1px;
-                viewport-height: image-data.height * scale * 1px;
+                viewport-width: image-width-scaled;
+                viewport-height: image-height-scaled;
                 TouchArea {
                     scroll-event(event) => {
                         if (event.delta-y > 0) {
-                            root.scale += 1;
-                        } else {
-                            root.scale -= 1;
+                            root.scale += 0.5;
+                        } else if (root.scale > 0.5) {
+                            root.scale -= 0.5;
                         }
                         accept
                     }
                     Image {
                         source: image-data;
                         image-fit: cover;
-                        width: image-data.width * scale * 1px;
-                        height: image-data.height * scale * 1px;
+                        width: image-width-scaled;
+                        height: image-height-scaled;
                     }
                 }
             }
