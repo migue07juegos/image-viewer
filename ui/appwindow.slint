@@ -6,9 +6,9 @@ export component MainWindow inherits Window {
     in-out property <float> scale: 1;
     private property <length> image-width-scaled: image-data.width * scale * 1px;
     private property <length> image-height-scaled: image-data.height * scale * 1px;
+    private property <float> ratio-x-viewport;
+    private property <float> ratio-y-viewport;
 
-    // chamge later to in or to out
-   
     title: "Slint Image Filter Integration Example";
     // preferred-width: 800px;
     // preferred-height: 600px;
@@ -19,6 +19,7 @@ export component MainWindow inherits Window {
                 text: "Original size" + scale;
                 clicked => {
                     image-size = 0;
+                    root.scale = 1;
                 }
             }
 
@@ -30,33 +31,45 @@ export component MainWindow inherits Window {
             }
         }
 
-        if (image-size == 1): HorizontalBox {
-            padding-left: (parent.width > image-width-scaled) ? (parent.width - image-width-scaled) / 2 : 0px;
-            Flickable {
-                viewport-width: image-width-scaled;
-                viewport-height: image-height-scaled;
-                TouchArea {
-                    scroll-event(event) => {
-                        if (event.delta-y > 0) {
-                            root.scale += 0.5;
-                        } else if (root.scale > 0.5) {
-                            root.scale -= 0.5;
+        HorizontalBox {
+            padding-left: (parent.width > image-width-scaled && image-size == 1) ? (parent.width - image-width-scaled) / 2 : 0px;
+            screen := TouchArea {
+                Flickable {
+                    viewport-width: (image-size == 1) ? image-width-scaled : self.width;
+                    viewport-height: (image-size == 1) ? image-height-scaled : self.height;
+                    TouchArea {
+                        clicked => {
+                            debug(screen.mouse-x);
+                            debug(screen.mouse-y);
+                            debug(self.mouse-x);
+                            debug(self.mouse-y);
+                            debug(parent.viewport-x);
+                            debug(parent.viewport-y);
                         }
-                        accept
-                    }
-                    Image {
-                        source: image-data;
-                        image-fit: cover;
-                        width: image-width-scaled;
-                        height: image-height-scaled;
+                        scroll-event(event) => {
+                            image-size = 1;
+                            ratio-x-viewport = self.mouse-x / parent.viewport-width;
+                            ratio-y-viewport = self.mouse-y / parent.viewport-height;
+                            if (event.delta-y > 0) {
+                                root.scale += 0.2;
+                                parent.viewport-x = screen.mouse-x - (ratio-x-viewport * parent.viewport-width);
+                                parent.viewport-y = screen.mouse-y - (ratio-y-viewport * parent.viewport-height);
+                            } else if (root.scale > 0.3) {
+                                root.scale -= 0.2;
+                                parent.viewport-x = screen.mouse-x - (ratio-x-viewport * parent.viewport-width);
+                                parent.viewport-y = screen.mouse-y - (ratio-y-viewport * parent.viewport-height);
+                            }
+                            accept
+                        }
+                        Image {
+                            source: image-data;
+                            image-fit: (image-size == 1) ? cover : contain;
+                            width: (image-size == 1) ? image-width-scaled : parent.width;
+                            height: (image-size == 1) ? image-height-scaled : parent.height;
+                        }
                     }
                 }
             }
-        }
-
-        if (image-size == 0): Image {
-            source: image-data;
-            image-fit: contain;
         }
     }
 }
