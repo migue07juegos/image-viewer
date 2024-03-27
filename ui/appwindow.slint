@@ -19,7 +19,7 @@ export component MainWindow inherits Window {
                 text: "Original size" + scale;
                 clicked => {
                     image-size = 0;
-                    root.scale = self.width / image-data.width / 1px;
+                    root.scale = parent.width / image-data.width / 1px;
                     viewport.viewport-x = 0;
                     viewport.viewport-y = 0;
                 }
@@ -36,8 +36,10 @@ export component MainWindow inherits Window {
         // padding-left: (parent.width > image-width-scaled && image-size == 1) ? (parent.width - image-width-scaled) / 2 : 0px;
         screen := TouchArea {
             viewport := Flickable {
-                viewport-width: (image-size == 1) ? image-width-scaled : self.width;
-                viewport-height: (image-size == 1) ? image-height-scaled : self.height;
+        viewport-width: image-width-scaled;
+        viewport-height: image-height-scaled;
+                // viewport-width: (image-size == 1) ? image-width-scaled : self.width;
+                // viewport-height: (image-size == 1) ? image-height-scaled : self.height;
                 TouchArea {
                     clicked => {
                         debug(screen.mouse-x);
@@ -48,13 +50,13 @@ export component MainWindow inherits Window {
                         debug(parent.viewport-y);
                     }
                     scroll-event(event) => {
-                        if (image-size == 0) {
-                            if (screen.width <= screen.height) {
-                                    scale = screen.width / image-data.width / 1px;
-                            } else {
-                                scale = screen.height / image-data.height / 1px;
-                            }
-                        }
+                        // if (image-size == 0) {
+                        //     if (screen.width <= screen.height) {
+                        //             scale = screen.width / image-data.width / 1px;
+                        //     } else {
+                        //         scale = screen.height / image-data.height / 1px;
+                        //     }
+                        // }
                         ratio-x-viewport = self.mouse-x / parent.viewport-width;
                         ratio-y-viewport = self.mouse-y / parent.viewport-height;
                         if (event.delta-y > 0) {
@@ -72,7 +74,7 @@ export component MainWindow inherits Window {
                         vertical-alignment: top;
                         image-rendering: pixelated;
                         source: image-data;
-                        image-fit: (image-size == 1) ? cover : contain;
+                        image-fit: (image-size == 1) ? cover : cover;
                         width: (image-size == 1) ? image-width-scaled : parent.width;
                         height: (image-size == 1) ? image-height-scaled : parent.height;
                     }
