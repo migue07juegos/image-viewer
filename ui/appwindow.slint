@@ -15,11 +15,13 @@ export component MainWindow inherits Window {
 
     VerticalBox {
         HorizontalBox {
-            Button {
+            boton1 := Button {
                 text: "Original size" + scale;
                 clicked => {
                     image-size = 0;
-                    root.scale = 1;
+                    root.scale = self.width / image-data.width / 1px;
+                    viewport.viewport-x = 0;
+                    viewport.viewport-y = 0;
                 }
             }
 
@@ -31,42 +33,48 @@ export component MainWindow inherits Window {
             }
         }
 
-        HorizontalBox {
-            padding-left: (parent.width > image-width-scaled && image-size == 1) ? (parent.width - image-width-scaled) / 2 : 0px;
-            screen := TouchArea {
-                Flickable {
-                    viewport-width: (image-size == 1) ? image-width-scaled : self.width;
-                    viewport-height: (image-size == 1) ? image-height-scaled : self.height;
-                    TouchArea {
-                        clicked => {
-                            debug(screen.mouse-x);
-                            debug(screen.mouse-y);
-                            debug(self.mouse-x);
-                            debug(self.mouse-y);
-                            debug(parent.viewport-x);
-                            debug(parent.viewport-y);
-                        }
-                        scroll-event(event) => {
-                            image-size = 1;
-                            ratio-x-viewport = self.mouse-x / parent.viewport-width;
-                            ratio-y-viewport = self.mouse-y / parent.viewport-height;
-                            if (event.delta-y > 0) {
-                                root.scale += 0.2;
-                                parent.viewport-x = screen.mouse-x - (ratio-x-viewport * parent.viewport-width);
-                                parent.viewport-y = screen.mouse-y - (ratio-y-viewport * parent.viewport-height);
-                            } else if (root.scale > 0.3) {
-                                root.scale -= 0.2;
-                                parent.viewport-x = screen.mouse-x - (ratio-x-viewport * parent.viewport-width);
-                                parent.viewport-y = screen.mouse-y - (ratio-y-viewport * parent.viewport-height);
+        // padding-left: (parent.width > image-width-scaled && image-size == 1) ? (parent.width - image-width-scaled) / 2 : 0px;
+        screen := TouchArea {
+            viewport := Flickable {
+                viewport-width: (image-size == 1) ? image-width-scaled : self.width;
+                viewport-height: (image-size == 1) ? image-height-scaled : self.height;
+                TouchArea {
+                    clicked => {
+                        debug(screen.mouse-x);
+                        debug(screen.mouse-y);
+                        debug(self.mouse-x);
+                        debug(self.mouse-y);
+                        debug(parent.viewport-x);
+                        debug(parent.viewport-y);
+                    }
+                    scroll-event(event) => {
+                        if (image-size == 0) {
+                            if (screen.width <= screen.height) {
+                                    scale = screen.width / image-data.width / 1px;
+                            } else {
+                                scale = screen.height / image-data.height / 1px;
                             }
-                            accept
                         }
-                        Image {
-                            source: image-data;
-                            image-fit: (image-size == 1) ? cover : contain;
-                            width: (image-size == 1) ? image-width-scaled : parent.width;
-                            height: (image-size == 1) ? image-height-scaled : parent.height;
+                        ratio-x-viewport = self.mouse-x / parent.viewport-width;
+                        ratio-y-viewport = self.mouse-y / parent.viewport-height;
+                        if (event.delta-y > 0) {
+                            root.scale += 0.2;
+                        } else if (root.scale > 0.3) {
+                            root.scale -= 0.2;
                         }
+                        parent.viewport-x = screen.mouse-x - (ratio-x-viewport * parent.viewport-width);
+                        parent.viewport-y = screen.mouse-y - (ratio-y-viewport * parent.viewport-height);
+                        image-size = 1;
+
+                        accept
+                    }
+                    Image {
+                        vertical-alignment: top;
+                        image-rendering: pixelated;
+                        source: image-data;
+                        image-fit: (image-size == 1) ? cover : contain;
+                        width: (image-size == 1) ? image-width-scaled : parent.width;
+                        height: (image-size == 1) ? image-height-scaled : parent.height;
                     }
                 }
             }
