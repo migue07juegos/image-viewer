@@ -24,7 +24,7 @@ component ChangeObserver {
 export component MainWindow inherits Window {
     in property <image> image-data;
     out property <int> image-size: 0;
-    private property <float> scale: (image-data.width / self.width >= image-data.height / self.height) ? self.width / image-data.width / 1px : self.height / image-data.height / 1px;
+    private property <float> scale: (image-data.width / image-display.width >= image-data.height / image-display.height) ? image-display.width / image-data.width / 1px : image-display.height / image-data.height / 1px;
     private property <length> image-width-scaled: image-data.width * scale * 1px;
     private property <length> image-height-scaled: image-data.height * scale * 1px;
     private property <float> ratio-x-viewport;
@@ -73,7 +73,7 @@ export component MainWindow inherits Window {
             }
         }
 
-        Rectangle {
+        image-display := Rectangle {
             // padding-left: (parent.width > image-width-scaled) ? (parent.width - image-width-scaled) / 2 : 0px;
             screen := TouchArea {
                 viewport := Flickable {
