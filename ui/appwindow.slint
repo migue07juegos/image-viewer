@@ -1,9 +1,30 @@
 import { HorizontalBox, VerticalBox, ComboBox, ScrollView, Button } from "std-widgets.slint";
 
+component ChangeObserver {
+    in property <length> value;
+    callback changed;
+
+    width: 0;
+    height: 0;
+    visible: false;
+    property <length> i-value;
+    property <bool> i-updated: false;
+
+    if i-value != value: Rectangle {
+        init => {
+            root.i-value = root.value;
+            if (root.i-updated) {
+                root.changed();
+            }
+            root.i-updated = true;
+        }
+    }
+}
+
 export component MainWindow inherits Window {
     in property <image> image-data;
     out property <int> image-size: 0;
-    in-out property <float> scale: (image-data.width / self.width >= image-data.height / self.height) ? self.width / image-data.width / 1px : self.height / image-data.height / 1px;
+    private property <float> scale: (image-data.width / self.width >= image-data.height / self.height) ? self.width / image-data.width / 1px : self.height / image-data.height / 1px;
     private property <length> image-width-scaled: image-data.width * scale * 1px;
     private property <length> image-height-scaled: image-data.height * scale * 1px;
     private property <float> ratio-x-viewport;
@@ -12,9 +33,27 @@ export component MainWindow inherits Window {
     title: "Slint Image Filter Integration Example";
     // preferred-width: 800px;
     // preferred-height: 600px;
-
+ 
     VerticalBox {
         HorizontalBox {
+            ChangeObserver {
+                value: parent.width;
+                changed => {
+                    if (image-size == 0) {
+                        root.scale = (image-data.width / screen.width >= image-data.height / screen.height) ? screen.width / image-data.width / 1px : screen.height / image-data.height / 1px;
+                    }
+                }
+            }
+
+            ChangeObserver {
+                value: parent.height;
+                changed => {
+                    if (image-size == 0) {
+                        root.scale = (image-data.width / screen.width >= image-data.height / screen.height) ? screen.width / image-data.width / 1px : screen.height / image-data.height / 1px;
+                    }
+                }
+            }
+
             boton1 := Button {
                 text: "Original size" + scale;
                 clicked => {
@@ -34,7 +73,7 @@ export component MainWindow inherits Window {
             }
         }
 
-        VerticalLayout {
+        Rectangle {
             // padding-left: (parent.width > image-width-scaled) ? (parent.width - image-width-scaled) / 2 : 0px;
             screen := TouchArea {
                 viewport := Flickable {
