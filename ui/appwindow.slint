@@ -55,7 +55,7 @@ export component MainWindow inherits Window {
             }
 
             boton1 := Button {
-                text: "Original size" + scale;
+                text: "Fit to window";
                 clicked => {
                     image-size = 0;
                     root.scale = (image-data.width / screen.width >= image-data.height / screen.height) ? screen.width / image-data.width / 1px : screen.height / image-data.height / 1px;
@@ -65,7 +65,7 @@ export component MainWindow inherits Window {
             }
 
             Button {
-                text: "Fit to window";
+                text: "Original size";
                 clicked => {
                     image-size = 1;
                     root.scale = 1;
