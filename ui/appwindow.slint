@@ -93,7 +93,7 @@ export component MainWindow inherits Window {
 
                             accept
                         }
-                        Image {
+                        image := Image {
                             vertical-alignment: center;
                             horizontal-alignment: center;
                             image-rendering: pixelated;
@@ -101,8 +101,8 @@ export component MainWindow inherits Window {
                             image-fit: cover;
                             width: image-width-scaled;
                             height: image-height-scaled;
-                            x: (screen.width > image-width-scaled) ? screen.width / 2 - image-width-scaled / 2 : 0;
-                            y: (screen.height > image-height-scaled) ? screen.height / 2 - image-height-scaled / 2 : 0;
+                            x: (screen.width > image-width-scaled) ? (screen.width - image-width-scaled) / 2 : 0;
+                            y: (screen.height > image-height-scaled) ? (screen.height - image-height-scaled) / 2 : 0;
                         }
                     }
                 }
