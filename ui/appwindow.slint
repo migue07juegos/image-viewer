@@ -89,8 +89,8 @@ export component MainWindow inherits Window {
                             } else if (root.scale > 0.3) {
                                 root.scale -= 0.2;
                             }
-                            parent.viewport-x = screen.mouse-x - (ratio-x-viewport * parent.viewport-width);
-                            parent.viewport-y = screen.mouse-y - (ratio-y-viewport * parent.viewport-height);
+                            parent.viewport-x = screen.mouse-x - (ratio-x-viewport * parent.viewport-width) - self.x;
+                            parent.viewport-y = screen.mouse-y - (ratio-y-viewport * parent.viewport-height) - self.y;
                             image-size = 1;
 
                             accept
