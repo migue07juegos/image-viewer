@@ -79,8 +79,8 @@ export component MainWindow inherits Window {
                     viewport-width: image-width-scaled;
                     viewport-height: image-height-scaled;
                     TouchArea {
-                        x: (screen.width > image-width-scaled) ? (screen.width - image-width-scaled) / 2 : 0;
-                        y: (screen.height > image-height-scaled) ? (screen.height - image-height-scaled) / 2 : 0;
+                        x: (screen.width - image-width-scaled) / 2;
+                        y: (screen.height - image-height-scaled) / 2;
                         scroll-event(event) => {
                             ratio-x-viewport = self.mouse-x / parent.viewport-width;
                             ratio-y-viewport = self.mouse-y / parent.viewport-height;
@@ -95,7 +95,7 @@ export component MainWindow inherits Window {
 
                             accept
                         }
-                        image := Image {
+                        Image {
                             vertical-alignment: center;
                             horizontal-alignment: center;
                             image-rendering: pixelated;
