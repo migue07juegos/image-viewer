@@ -74,7 +74,6 @@ export component MainWindow inherits Window {
         }
 
         image-display := Rectangle {
-            // padding-left: (parent.width > image-width-scaled) ? (parent.width - image-width-scaled) / 2 : 0px;
             screen := TouchArea {
                 viewport := Flickable {
                     viewport-width: image-width-scaled;
@@ -95,12 +94,15 @@ export component MainWindow inherits Window {
                             accept
                         }
                         Image {
-                            vertical-alignment: top;
+                            vertical-alignment: center;
+                            horizontal-alignment: center;
                             image-rendering: pixelated;
                             source: image-data;
                             image-fit: cover;
                             width: image-width-scaled;
                             height: image-height-scaled;
+                            x: (screen.width > image-width-scaled) ? screen.width / 2 - image-width-scaled / 2 : 0;
+                            y: (screen.height > image-height-scaled) ? screen.height / 2 - image-height-scaled / 2 : 0;
                         }
                     }
                 }
