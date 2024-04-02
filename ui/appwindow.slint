@@ -29,6 +29,9 @@ export component MainWindow inherits Window {
     private property <length> image-height-scaled: image-data.height * scale * 1px;
     private property <float> ratio-x-viewport;
     private property <float> ratio-y-viewport;
+    callback rotate_clockwise <=> rotateClockwise.clicked;
+    callback rotate_default <=> rotateDefault.clicked;
+  callback rotate_anti_clockwise <=> rotateAntiClockwise.clicked;
 
     title: "Slint Image Filter Integration Example";
     // preferred-width: 800px;
@@ -71,6 +74,18 @@ export component MainWindow inherits Window {
                     root.scale = 1;
                 }
             }
+
+            rotateClockwise := Button {
+                text: "Rotate clockwise";
+            }
+
+            rotateDefault := Button {
+                text: "Default rotation";
+            }
+
+            rotateAntiClockwise := Button {
+                text: "Rotate anti-clockwise";
+            }
         }
 
         image-display := Rectangle {
@@ -95,7 +110,7 @@ export component MainWindow inherits Window {
 
                             accept
                         }
-                        Image {
+                        image := Image {
                             vertical-alignment: center;
                             horizontal-alignment: center;
                             image-rendering: pixelated;
