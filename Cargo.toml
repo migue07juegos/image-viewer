@@ -8,6 +8,7 @@ build = "build.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+arboard = { version = "3.3.2", features = ["wayland-data-control"]}
 image = "0.25.0"
 slint = { version = "1.5", features = ["renderer-skia-vulkan"] }
 

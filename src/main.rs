@@ -1,20 +1,23 @@
+use arboard::{Clipboard, ImageData};
+use image::imageops::{rotate270, rotate90};
+use std::borrow::Cow;
 use std::{
     env,
     path::PathBuf,
     sync::{Arc, Mutex},
 };
-
-use image::imageops::{rotate270, rotate90};
 slint::include_modules!();
 
 fn main() -> Result<(), slint::PlatformError> {
     let args: Vec<String> = env::args().collect();
     let image_path: PathBuf = (&args[1]).into();
 
+    let mut clipboard = Clipboard::new().unwrap();
+
     let source_image = image::open(&image_path)
         .expect("Error loading image")
         .into_rgba8();
-    let cell_image = Arc::new(Mutex::new(source_image.clone()));
+    let arc_image = Arc::new(Mutex::new(source_image.clone()));
 
     let ui = MainWindow::new()?;
     let ui_weak = ui.as_weak();
@@ -27,7 +30,7 @@ fn main() -> Result<(), slint::PlatformError> {
         ),
     ));
     {
-        let copied_image = cell_image.clone();
+        let copied_image = arc_image.clone();
         let ui_weak = ui_weak.clone();
 
         ui.on_rotate_clockwise(move || {
@@ -47,7 +50,7 @@ fn main() -> Result<(), slint::PlatformError> {
     }
 
     {
-        let copied_image = cell_image.clone();
+        let copied_image = arc_image.clone();
         let ui_weak = ui_weak.clone();
 
         ui.on_rotate_anti_clockwise(move || {
@@ -67,7 +70,7 @@ fn main() -> Result<(), slint::PlatformError> {
     }
 
     {
-        let copied_image = cell_image.clone();
+        let copied_image = arc_image.clone();
         let ui_weak = ui_weak.clone();
         let source_image = source_image.clone();
 
@@ -87,6 +90,15 @@ fn main() -> Result<(), slint::PlatformError> {
             });
         });
     }
+
+    ui.on_copy(move || {
+        let copied_image = arc_image.lock().unwrap();
+        let _ = clipboard.set_image(ImageData {
+            width: copied_image.width().try_into().unwrap(),
+            height: copied_image.height().try_into().unwrap(),
+            bytes: Cow::from(copied_image.as_raw()),
+        });
+    });
 
     ui.set_image_data(slint::Image::load_from_path(&image_path).unwrap());
 
