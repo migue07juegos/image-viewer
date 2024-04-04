@@ -33,6 +33,7 @@ export component MainWindow inherits Window {
     callback rotate_default <=> rotateDefault.clicked;
     callback rotate_anti_clockwise <=> rotateAntiClockwise.clicked;
     callback copy <=> copyButton.clicked;
+    callback save <=> saveButton.clicked;
 
     title: "Slint Image Filter Integration Example";
     // preferred-width: 800px;
@@ -90,6 +91,10 @@ export component MainWindow inherits Window {
 
             copyButton := Button {
                 text: "Copy image";
+            }
+
+            saveButton := Button {
+                text: "Save image";
             }
         }
 

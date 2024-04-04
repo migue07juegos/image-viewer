@@ -91,14 +91,34 @@ fn main() -> Result<(), slint::PlatformError> {
         });
     }
 
-    ui.on_copy(move || {
-        let copied_image = arc_image.lock().unwrap();
-        let _ = clipboard.set_image(ImageData {
-            width: copied_image.width().try_into().unwrap(),
-            height: copied_image.height().try_into().unwrap(),
-            bytes: Cow::from(copied_image.as_raw()),
+    {
+        let copied_image = arc_image.clone();
+
+        ui.on_copy(move || {
+            let copied_image = copied_image.lock().unwrap();
+            let _ = clipboard.set_image(ImageData {
+                width: copied_image.width().try_into().unwrap(),
+                height: copied_image.height().try_into().unwrap(),
+                bytes: Cow::from(copied_image.as_raw()),
+            });
         });
-    });
+    }
+
+    {
+        let copied_image = arc_image.clone();
+        let image_path = image_path.clone();
+
+        ui.on_save(move || {
+            let copied_image = copied_image.lock().unwrap();
+            let image_modified_path = image_path.parent().unwrap().to_path_buf().join(format!(
+                "{}_modified.png",
+                image_path.file_stem().unwrap().to_string_lossy()
+            ));
+            copied_image
+                .save(image_modified_path)
+                .expect("Error while saving image");
+        });
+    }
 
     ui.set_image_data(slint::Image::load_from_path(&image_path).unwrap());
 
