@@ -109,6 +109,11 @@ fn main() -> Result<(), slint::PlatformError> {
         let image_path = image_path.clone();
 
         ui.on_save(move || {
+            let ui = ui_weak.upgrade().unwrap();
+            ui.invoke_overwritePopup();
+            ui.on_ca(move || {
+                return;
+            });
             let copied_image = copied_image.lock().unwrap();
             let image_modified_path = image_path.parent().unwrap().to_path_buf().join(format!(
                 "{}_modified.png",
