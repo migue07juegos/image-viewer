@@ -34,9 +34,11 @@ export component MainWindow inherits Window {
     callback rotate_anti_clockwise <=> rotateAntiClockwise.clicked;
     callback copy <=> copyButton.clicked;
     callback save <=> saveButton.clicked;
-    callback overwritePopup;
+    callback overwritePopupShow;
+    callback overwriteYes;
+    callback overwriteNo;
 
-    overwritePopup => {
+    overwritePopupShow => {
         popup.show();
     }
 
@@ -61,14 +63,21 @@ export component MainWindow inherits Window {
 
                 StandardButton {
                     kind: yes;
+                    clicked => {
+                        overwriteYes();
+                        popup.close();
+                    }
                 }
 
                 StandardButton {
                     kind: no;
+                    clicked => {
+                        overwriteNo();
+                    }
                 }
 
                 StandardButton {
-                    kind: abort;
+                    kind: cancel;
                     clicked => {
                         popup.close();
                     }
@@ -112,7 +121,6 @@ export component MainWindow inherits Window {
                 clicked => {
                     image-size = 1;
                     root.scale = 1;
-                    // popup.show();
                 }
             }
 

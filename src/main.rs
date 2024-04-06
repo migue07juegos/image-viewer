@@ -109,19 +109,25 @@ fn main() -> Result<(), slint::PlatformError> {
         let image_path = image_path.clone();
 
         ui.on_save(move || {
-            let ui = ui_weak.upgrade().unwrap();
-            ui.invoke_overwritePopup();
-            ui.on_ca(move || {
-                return;
-            });
             let copied_image = copied_image.lock().unwrap();
-            let image_modified_path = image_path.parent().unwrap().to_path_buf().join(format!(
+            let ui = ui_weak.upgrade().unwrap();
+            ui.invoke_overwritePopupShow();
+
+            let image_path = image_path.clone();
+            let copied_image = copied_image.clone();
+            ui.on_overwriteYes(move || {
+                copied_image.save(&image_path).expect("Error while saving image");
+            });
+            ui.on_overwriteNo(move || {
+                println!("no");
+            });
+   /*         let image_modified_path = image_path.parent().unwrap().to_path_buf().join(format!(
                 "{}_modified.png",
                 image_path.file_stem().unwrap().to_string_lossy()
             ));
             copied_image
                 .save(image_modified_path)
-                .expect("Error while saving image");
+                .expect("Error while saving image");*/
         });
     }
 
