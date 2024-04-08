@@ -38,96 +38,105 @@ export component MainWindow inherits Window {
     title: "Slint Image Filter Integration Example";
     // preferred-width: 800px;
     // preferred-height: 600px;
-
-    VerticalBox {
-        HorizontalBox {
-            ChangeObserver {
-                value: parent.width;
-                changed => {
-                    if (image-size == 0) {
-                        root.scale = (image-data.width / screen.width >= image-data.height / screen.height) ? screen.width / image-data.width / 1px : screen.height / image-data.height / 1px;
-                    }
-                }
+  forward-focus: key-handler;
+    key-handler := FocusScope {
+        key-pressed(key) => {
+            if (key.modifiers.control && key.text == "s") {
+                save();
             }
-
-            ChangeObserver {
-                value: parent.height;
-                changed => {
-                    if (image-size == 0) {
-                        root.scale = (image-data.width / screen.width >= image-data.height / screen.height) ? screen.width / image-data.width / 1px : screen.height / image-data.height / 1px;
-                    }
-                }
-            }
-
-            boton1 := Button {
-                text: "Fit to window";
-                clicked => {
-                    image-size = 0;
-                    root.scale = (image-data.width / screen.width >= image-data.height / screen.height) ? screen.width / image-data.width / 1px : screen.height / image-data.height / 1px;
-                    viewport.viewport-x = 0;
-                    viewport.viewport-y = 0;
-                }
-            }
-
-            Button {
-                text: "Original size";
-                clicked => {
-                    image-size = 1;
-                    root.scale = 1;
-                }
-            }
-
-            rotateClockwise := Button {
-                text: "Rotate clockwise";
-            }
-
-            rotateDefault := Button {
-                text: "Default rotation";
-            }
-
-            rotateAntiClockwise := Button {
-                text: "Rotate anti-clockwise";
-            }
-
-            copyButton := Button {
-                text: "Copy image";
-            }
-
-            saveButton := Button {
-                text: "Save image";
-            }
+            accept
         }
 
-        image-display := Rectangle {
-            screen := TouchArea {
-                viewport := Flickable {
-                    viewport-width: image-width-scaled;
-                    viewport-height: image-height-scaled;
-                    TouchArea {
-                        x: (screen.width > image-width-scaled) ? (screen.width - image-width-scaled) / 2 : 0;
-                        y: (screen.height > image-height-scaled) ? (screen.height - image-height-scaled) / 2 : 0;
-                        scroll-event(event) => {
-                            ratio-x-viewport = self.mouse-x / parent.viewport-width;
-                            ratio-y-viewport = self.mouse-y / parent.viewport-height;
-                            if (event.delta-y > 0) {
-                                root.scale += 0.2;
-                            } else if (root.scale > 0.3) {
-                                root.scale -= 0.2;
-                            }
-                            parent.viewport-x = screen.mouse-x - (ratio-x-viewport * parent.viewport-width) - self.x;
-                            parent.viewport-y = screen.mouse-y - (ratio-y-viewport * parent.viewport-height) - self.y;
-                            image-size = 1;
-
-                            accept
+        VerticalBox {
+            HorizontalBox {
+                ChangeObserver {
+                    value: parent.width;
+                    changed => {
+                        if (image-size == 0) {
+                            root.scale = (image-data.width / screen.width >= image-data.height / screen.height) ? screen.width / image-data.width / 1px : screen.height / image-data.height / 1px;
                         }
-                        image := Image {
-                            vertical-alignment: center;
-                            horizontal-alignment: center;
-                            image-rendering: pixelated;
-                            source: image-data;
-                            image-fit: cover;
-                            width: image-width-scaled;
-                            height: image-height-scaled;
+                    }
+                }
+
+                ChangeObserver {
+                    value: parent.height;
+                    changed => {
+                        if (image-size == 0) {
+                            root.scale = (image-data.width / screen.width >= image-data.height / screen.height) ? screen.width / image-data.width / 1px : screen.height / image-data.height / 1px;
+                        }
+                    }
+                }
+
+                boton1 := Button {
+                    text: "Fit to window";
+                    clicked => {
+                        image-size = 0;
+                        root.scale = (image-data.width / screen.width >= image-data.height / screen.height) ? screen.width / image-data.width / 1px : screen.height / image-data.height / 1px;
+                        viewport.viewport-x = 0;
+                        viewport.viewport-y = 0;
+                    }
+                }
+
+                Button {
+                    text: "Original size";
+                    clicked => {
+                        image-size = 1;
+                        root.scale = 1;
+                    }
+                }
+
+                rotateClockwise := Button {
+                    text: "Rotate clockwise";
+                }
+
+                rotateDefault := Button {
+                    text: "Default rotation";
+                }
+
+                rotateAntiClockwise := Button {
+                    text: "Rotate anti-clockwise";
+                }
+
+                copyButton := Button {
+                    text: "Copy image";
+                }
+
+                saveButton := Button {
+                    text: "Save image";
+                }
+            }
+
+            image-display := Rectangle {
+                screen := TouchArea {
+                    viewport := Flickable {
+                        viewport-width: image-width-scaled;
+                        viewport-height: image-height-scaled;
+                        TouchArea {
+                            x: (screen.width > image-width-scaled) ? (screen.width - image-width-scaled) / 2 : 0;
+                            y: (screen.height > image-height-scaled) ? (screen.height - image-height-scaled) / 2 : 0;
+                            scroll-event(event) => {
+                                ratio-x-viewport = self.mouse-x / parent.viewport-width;
+                                ratio-y-viewport = self.mouse-y / parent.viewport-height;
+                                if (event.delta-y > 0) {
+                                    root.scale += 0.2;
+                                } else if (root.scale > 0.3) {
+                                    root.scale -= 0.2;
+                                }
+                                parent.viewport-x = screen.mouse-x - (ratio-x-viewport * parent.viewport-width) - self.x;
+                                parent.viewport-y = screen.mouse-y - (ratio-y-viewport * parent.viewport-height) - self.y;
+                                image-size = 1;
+
+                                accept
+                            }
+                            image := Image {
+                                vertical-alignment: center;
+                                horizontal-alignment: center;
+                                image-rendering: pixelated;
+                                source: image-data;
+                                image-fit: cover;
+                                width: image-width-scaled;
+                                height: image-height-scaled;
+                            }
                         }
                     }
                 }
