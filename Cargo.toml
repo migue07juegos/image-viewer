@@ -10,6 +10,7 @@ build = "build.rs"
 [dependencies]
 arboard = { version = "3.3.2", features = ["wayland-data-control"]}
 image = "0.25.0"
+rfd = "0.14.1"
 slint = { version = "1.5", features = ["renderer-skia-vulkan"] }
 
 [build-dependencies]

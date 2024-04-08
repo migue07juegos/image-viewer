@@ -34,57 +34,10 @@ export component MainWindow inherits Window {
     callback rotate_anti_clockwise <=> rotateAntiClockwise.clicked;
     callback copy <=> copyButton.clicked;
     callback save <=> saveButton.clicked;
-    callback overwritePopupShow;
-    callback overwriteYes;
-    callback overwriteNo;
-
-    overwritePopupShow => {
-        popup.show();
-    }
 
     title: "Slint Image Filter Integration Example";
     // preferred-width: 800px;
     // preferred-height: 600px;
-
-     popup := PopupWindow {
-        x: 40px;
-        y: 100px;
-        height: 200px;
-        width: 200px;
-        close-on-click: false;
-        Rectangle {
-            background: Palette.background;
-            dialog := Dialog {
-                height: 100%;
-                width: 100%;
-                Text {
-                    text: "Do you want to overwrite {insert image name}";
-                }
-
-                StandardButton {
-                    kind: yes;
-                    clicked => {
-                        overwriteYes();
-                        popup.close();
-                    }
-                }
-
-                StandardButton {
-                    kind: no;
-                    clicked => {
-                        overwriteNo();
-                    }
-                }
-
-                StandardButton {
-                    kind: cancel;
-                    clicked => {
-                        popup.close();
-                    }
-                }
-            }
-        }
-    }
 
     VerticalBox {
         HorizontalBox {

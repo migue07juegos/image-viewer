@@ -1,5 +1,6 @@
 use arboard::{Clipboard, ImageData};
 use image::imageops::{rotate270, rotate90};
+use rfd::FileDialog;
 use std::borrow::Cow;
 use std::{
     env,
@@ -109,25 +110,26 @@ fn main() -> Result<(), slint::PlatformError> {
         let image_path = image_path.clone();
 
         ui.on_save(move || {
+            let files_dialog = FileDialog::new()
+                .add_filter("Image", &["png"])
+                .set_directory(image_path.parent().unwrap())
+                .set_file_name(image_path.file_stem().unwrap().to_string_lossy())
+                .save_file();
             let copied_image = copied_image.lock().unwrap();
-            let ui = ui_weak.upgrade().unwrap();
-            ui.invoke_overwritePopupShow();
 
-            let image_path = image_path.clone();
-            let copied_image = copied_image.clone();
-            ui.on_overwriteYes(move || {
-                copied_image.save(&image_path).expect("Error while saving image");
-            });
-            ui.on_overwriteNo(move || {
-                println!("no");
-            });
-   /*         let image_modified_path = image_path.parent().unwrap().to_path_buf().join(format!(
-                "{}_modified.png",
-                image_path.file_stem().unwrap().to_string_lossy()
-            ));
-            copied_image
-                .save(image_modified_path)
-                .expect("Error while saving image");*/
+            match files_dialog {
+                Some(path) => {
+                    if cfg!(target_os="linux") {
+                        println!("{}", format!("{}.png", path.to_string_lossy()));
+                        copied_image
+                            .save(format!("{}.png", path.to_string_lossy()))
+                            .expect("Error saving");
+                    } else {
+                        copied_image.save(path).expect("Error saving")
+                    }
+                }
+                None => (),
+            }
         });
     }
 
