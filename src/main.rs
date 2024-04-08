@@ -72,28 +72,6 @@ fn main() -> Result<(), slint::PlatformError> {
 
     {
         let copied_image = arc_image.clone();
-        let ui_weak = ui_weak.clone();
-        let source_image = source_image.clone();
-
-        ui.on_rotate_default(move || {
-            let source_image = source_image.clone();
-            let copied_image = copied_image.clone();
-            let _ = ui_weak.upgrade_in_event_loop(move |ui| {
-                let mut rotated_image = copied_image.lock().unwrap();
-                *rotated_image = source_image;
-                ui.set_image_data(slint::Image::from_rgba8(
-                    slint::SharedPixelBuffer::clone_from_slice(
-                        rotated_image.as_raw(),
-                        rotated_image.width(),
-                        rotated_image.height(),
-                    ),
-                ))
-            });
-        });
-    }
-
-    {
-        let copied_image = arc_image.clone();
 
         ui.on_copy(move || {
             let copied_image = copied_image.lock().unwrap();

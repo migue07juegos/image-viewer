@@ -30,7 +30,6 @@ export component MainWindow inherits Window {
     private property <float> ratio-x-viewport;
     private property <float> ratio-y-viewport;
     callback rotate_clockwise <=> rotateClockwise.clicked;
-    callback rotate_default <=> rotateDefault.clicked;
     callback rotate_anti_clockwise <=> rotateAntiClockwise.clicked;
     callback copy <=> copyButton.clicked;
     callback save <=> saveButton.clicked;
@@ -68,7 +67,8 @@ export component MainWindow inherits Window {
                 }
 
                 boton1 := Button {
-                    text: "Fit to window";
+                    // text: "Fit to window";
+                    icon: @image-url("Icons/zoom-fit-best-symbolic.svg");
                     clicked => {
                         image-size = 0;
                         root.scale = (image-data.width / screen.width >= image-data.height / screen.height) ? screen.width / image-data.width / 1px : screen.height / image-data.height / 1px;
@@ -78,31 +78,32 @@ export component MainWindow inherits Window {
                 }
 
                 Button {
-                    text: "Original size";
+                    // text: "Original size";
+                    icon: @image-url("Icons/zoom-original-symbolic.svg");
                     clicked => {
                         image-size = 1;
                         root.scale = 1;
                     }
                 }
+          
+                rotateAntiClockwise := Button {
+                    // text: "Rotate anti-clockwise";
+                    icon: @image-url("Icons/object-rotate-left-symbolic.svg");
+                }
 
                 rotateClockwise := Button {
-                    text: "Rotate clockwise";
-                }
-
-                rotateDefault := Button {
-                    text: "Default rotation";
-                }
-
-                rotateAntiClockwise := Button {
-                    text: "Rotate anti-clockwise";
+                    // text: "Rotate clockwise";
+                    icon: @image-url("Icons/object-rotate-right-symbolic.svg");
                 }
 
                 copyButton := Button {
-                    text: "Copy image";
+                    // text: "Copy image";
+                    icon: @image-url("Icons/edit-copy-symbolic.svg");
                 }
 
                 saveButton := Button {
-                    text: "Save image";
+                    // text: "Save image";
+                    icon: @image-url("Icons/document-save-symbolic.svg");
                 }
 
                 aliasing := Switch {
