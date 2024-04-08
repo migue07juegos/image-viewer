@@ -1,7 +1,9 @@
 use arboard::{Clipboard, ImageData};
 use image::imageops::{rotate270, rotate90};
+use image::ImageFormat;
 use rfd::FileDialog;
 use std::borrow::Cow;
+use std::fs;
 use std::{
     env,
     path::PathBuf,
@@ -12,6 +14,23 @@ slint::include_modules!();
 fn main() -> Result<(), slint::PlatformError> {
     let args: Vec<String> = env::args().collect();
     let image_path: PathBuf = (&args[1]).into();
+    let mut image_path_vector: Vec<PathBuf> = Vec::new();
+
+    let folder = fs::read_dir(image_path.parent().unwrap()).unwrap();
+    for file in folder {
+        let image_format =
+            ImageFormat::from_extension(file.as_ref().unwrap().path().extension().unwrap());
+        match image_format {
+            Some(e) => {
+                if ImageFormat::can_read(&e) {
+                    println!("supported");
+                    image_path_vector.push(file.unwrap().path());
+                }
+            }
+            None => (),
+        }
+    }
+    println!("{:?}", image_path_vector);
 
     let mut clipboard = Clipboard::new().unwrap();
 
@@ -97,7 +116,7 @@ fn main() -> Result<(), slint::PlatformError> {
 
             match files_dialog {
                 Some(path) => {
-                    if cfg!(target_os="linux") {
+                    if cfg!(target_os = "linux") {
                         println!("{}", format!("{}.png", path.to_string_lossy()));
                         copied_image
                             .save(format!("{}.png", path.to_string_lossy()))
@@ -112,12 +131,12 @@ fn main() -> Result<(), slint::PlatformError> {
     }
 
     ui.set_image_data(slint::Image::from_rgba8(
-                    slint::SharedPixelBuffer::clone_from_slice(
-                        source_image.as_raw(),
-                        source_image.width(),
-                        source_image.height(),
-                    ),
-                ));
+        slint::SharedPixelBuffer::clone_from_slice(
+            source_image.as_raw(),
+            source_image.width(),
+            source_image.height(),
+        ),
+    ));
 
     ui.run()
 }
