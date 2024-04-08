@@ -1,4 +1,4 @@
-import { HorizontalBox, VerticalBox, ComboBox, ScrollView, Button, Palette, StandardButton } from "std-widgets.slint";
+import { HorizontalBox, VerticalBox, ComboBox, ScrollView, Button, Palette, StandardButton, Switch } from "std-widgets.slint";
 
 component ChangeObserver {
     in property <length> value;
@@ -104,6 +104,10 @@ export component MainWindow inherits Window {
                 saveButton := Button {
                     text: "Save image";
                 }
+
+                aliasing := Switch {
+                    text: "Anti-aliasing";
+                }
             }
 
             image-display := Rectangle {
@@ -131,7 +135,7 @@ export component MainWindow inherits Window {
                             image := Image {
                                 vertical-alignment: center;
                                 horizontal-alignment: center;
-                                image-rendering: pixelated;
+                                image-rendering: (aliasing.checked) ? smooth : pixelated;
                                 source: image-data;
                                 image-fit: cover;
                                 width: image-width-scaled;
