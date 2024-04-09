@@ -3,13 +3,13 @@ use image::imageops::{rotate270, rotate90};
 use image::ImageFormat;
 use rfd::FileDialog;
 use std::borrow::Cow;
+use std::fs;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::{
     env,
     path::PathBuf,
     sync::{Arc, Mutex},
 };
-use std::fs;
 slint::include_modules!();
 
 fn main() -> Result<(), slint::PlatformError> {
@@ -20,15 +20,17 @@ fn main() -> Result<(), slint::PlatformError> {
 
     let folder = fs::read_dir(image_path.parent().unwrap()).unwrap();
     for file in folder {
-        let image_format =
-            ImageFormat::from_extension(file.as_ref().unwrap().path().extension().unwrap());
-        match image_format {
-            Some(e) => {
-                if ImageFormat::can_read(&e) {
-                    image_path_vector.push(file.unwrap().path());
+        if file.as_ref().unwrap().path().is_file() {
+            let image_format =
+                ImageFormat::from_extension(file.as_ref().unwrap().path().extension().unwrap());
+            match image_format {
+                Some(e) => {
+                    if ImageFormat::can_read(&e) {
+                        image_path_vector.push(file.unwrap().path());
+                    }
                 }
+                None => (),
             }
-            None => (),
         }
     }
 
