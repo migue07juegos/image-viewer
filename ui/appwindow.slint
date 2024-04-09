@@ -33,6 +33,8 @@ export component MainWindow inherits Window {
     callback rotate_anti_clockwise <=> rotateAntiClockwise.clicked;
     callback copy <=> copyButton.clicked;
     callback save <=> saveButton.clicked;
+    callback next_image;
+    callback previous_image;
 
     title: "Slint Image Filter Integration Example";
     // preferred-width: 800px;
@@ -42,6 +44,12 @@ export component MainWindow inherits Window {
         key-pressed(key) => {
             if (key.modifiers.control && key.text == "s") {
                 save();
+            }
+            if (key.text == Key.RightArrow) {
+                next_image();
+            }
+            if (key.text == Key.LeftArrow) {
+                previous_image();
             }
             accept
         }
@@ -85,7 +93,7 @@ export component MainWindow inherits Window {
                         root.scale = 1;
                     }
                 }
-          
+
                 rotateAntiClockwise := Button {
                     // text: "Rotate anti-clockwise";
                     icon: @image-url("Icons/object-rotate-left-symbolic.svg");

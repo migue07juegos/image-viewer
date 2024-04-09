@@ -3,18 +3,20 @@ use image::imageops::{rotate270, rotate90};
 use image::ImageFormat;
 use rfd::FileDialog;
 use std::borrow::Cow;
-use std::fs;
+use std::sync::atomic::{AtomicUsize, Ordering};
 use std::{
     env,
     path::PathBuf,
     sync::{Arc, Mutex},
 };
+use std::fs;
 slint::include_modules!();
 
 fn main() -> Result<(), slint::PlatformError> {
     let args: Vec<String> = env::args().collect();
     let image_path: PathBuf = (&args[1]).into();
     let mut image_path_vector: Vec<PathBuf> = Vec::new();
+    let vector_index = Arc::new(AtomicUsize::new(0));
 
     let folder = fs::read_dir(image_path.parent().unwrap()).unwrap();
     for file in folder {
@@ -23,14 +25,21 @@ fn main() -> Result<(), slint::PlatformError> {
         match image_format {
             Some(e) => {
                 if ImageFormat::can_read(&e) {
-                    println!("supported");
                     image_path_vector.push(file.unwrap().path());
                 }
             }
             None => (),
         }
     }
-    println!("{:?}", image_path_vector);
+
+    vector_index.store(
+        image_path_vector
+            .iter()
+            .position(|x| x == &image_path)
+            .unwrap()
+            .into(),
+        Ordering::SeqCst,
+    );
 
     let mut clipboard = Clipboard::new().unwrap();
 
@@ -127,6 +136,74 @@ fn main() -> Result<(), slint::PlatformError> {
                 }
                 None => (),
             }
+        });
+    }
+    {
+        let copied_image = arc_image.clone();
+        let image_path_vector = image_path_vector.clone();
+        let ui_weak = ui_weak.clone();
+        let vector_index = vector_index.clone();
+
+        ui.on_next_image(move || {
+            let vector_index = vector_index.clone();
+            let copied_image = copied_image.clone();
+            let image_path_vector = image_path_vector.clone();
+            let _ = ui_weak.upgrade_in_event_loop(move |ui| {
+                let mut copied_image = copied_image.lock().unwrap();
+                if image_path_vector.len() - 1 > vector_index.load(Ordering::SeqCst) {
+                    vector_index.store(vector_index.load(Ordering::SeqCst) + 1, Ordering::SeqCst);
+                } else {
+                    vector_index.store(0, Ordering::SeqCst);
+                }
+                *copied_image = image::open(
+                    image_path_vector
+                        .get(vector_index.load(Ordering::SeqCst))
+                        .unwrap(),
+                )
+                .expect("Error loading image")
+                .into_rgba8();
+                ui.set_image_data(slint::Image::from_rgba8(
+                    slint::SharedPixelBuffer::clone_from_slice(
+                        copied_image.as_raw(),
+                        copied_image.width(),
+                        copied_image.height(),
+                    ),
+                ))
+            });
+        });
+    }
+    {
+        let copied_image = arc_image.clone();
+        let image_path_vector = image_path_vector.clone();
+        let ui_weak = ui_weak.clone();
+        let vector_index = vector_index.clone();
+
+        ui.on_previous_image(move || {
+            let vector_index = vector_index.clone();
+            let copied_image = copied_image.clone();
+            let image_path_vector = image_path_vector.clone();
+            let _ = ui_weak.upgrade_in_event_loop(move |ui| {
+                let mut copied_image = copied_image.lock().unwrap();
+                if vector_index.load(Ordering::SeqCst) > 0 {
+                    vector_index.store(vector_index.load(Ordering::SeqCst) - 1, Ordering::SeqCst);
+                } else {
+                    vector_index.store(image_path_vector.len() - 1, Ordering::SeqCst);
+                }
+                *copied_image = image::open(
+                    image_path_vector
+                        .get(vector_index.load(Ordering::SeqCst))
+                        .unwrap(),
+                )
+                .expect("Error loading image")
+                .into_rgba8();
+                ui.set_image_data(slint::Image::from_rgba8(
+                    slint::SharedPixelBuffer::clone_from_slice(
+                        copied_image.as_raw(),
+                        copied_image.width(),
+                        copied_image.height(),
+                    ),
+                ))
+            });
         });
     }
 
