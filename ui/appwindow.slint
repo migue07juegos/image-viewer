@@ -21,6 +21,25 @@ component ChangeObserver {
     }
 }
 
+component ArrowButton inherits Rectangle {
+    in-out property icon <=> icon.source;
+    callback clicked <=> touch.clicked;
+    opacity: touch.has-hover ? 100% : 0%;
+
+    background: #000000AA;
+    height: 60px;
+    width: 45px;
+    icon := Image {
+        vertical-alignment: center;
+        horizontal-alignment: center;
+        image-fit: contain;
+        height: 60px;
+        width: 45px;
+    }
+
+    touch := TouchArea { }
+}
+
 export component MainWindow inherits Window {
     in property <image> image-data;
     out property <int> image-size: 0;
@@ -120,6 +139,20 @@ export component MainWindow inherits Window {
             }
 
             image-display := Rectangle {
+                previous_arrow := ArrowButton {
+                    icon: @image-url("Icons/go-previous-symbolic.svg");
+                    x: 0;
+                    y: parent.height / 2;
+                    z: 0.1;
+                }
+
+                next_arrow := ArrowButton {
+                    icon: @image-url("Icons/go-next-symbolic.svg");
+                    x: parent.width - self.width;
+                    y: parent.height / 2;
+                    z: 0.1;
+                }
+
                 screen := TouchArea {
                     viewport := Flickable {
                         viewport-width: image-width-scaled;
