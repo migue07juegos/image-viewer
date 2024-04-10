@@ -144,6 +144,9 @@ export component MainWindow inherits Window {
                     x: 0;
                     y: parent.height / 2;
                     z: 0.1;
+                    clicked => {
+                        previous_image();
+                    }
                 }
 
                 next_arrow := ArrowButton {
@@ -151,6 +154,9 @@ export component MainWindow inherits Window {
                     x: parent.width - self.width;
                     y: parent.height / 2;
                     z: 0.1;
+                    clicked => {
+                        next_image();
+                    }
                 }
 
                 screen := TouchArea {
