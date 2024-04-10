@@ -170,7 +170,8 @@ fn main() -> Result<(), slint::PlatformError> {
                         copied_image.width(),
                         copied_image.height(),
                     ),
-                ))
+                ));
+                ui.invoke_update_scale();
             });
         });
     }
@@ -204,7 +205,8 @@ fn main() -> Result<(), slint::PlatformError> {
                         copied_image.width(),
                         copied_image.height(),
                     ),
-                ))
+                ));
+                ui.invoke_update_scale();
             });
         });
     }

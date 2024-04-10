@@ -54,6 +54,11 @@ export component MainWindow inherits Window {
     callback save <=> saveButton.clicked;
     callback next_image;
     callback previous_image;
+    callback update_scale;
+
+    update_scale => {
+        scale = (image-data.width / image-display.width >= image-data.height / image-display.height) ? image-display.width / image-data.width / 1px : image-display.height / image-data.height / 1px;
+    }
 
     title: "Slint Image Filter Integration Example";
     // preferred-width: 800px;
