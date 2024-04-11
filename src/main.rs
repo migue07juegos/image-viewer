@@ -211,13 +211,5 @@ fn main() -> Result<(), slint::PlatformError> {
         });
     }
 
-    ui.set_image_data(slint::Image::from_rgba8(
-        slint::SharedPixelBuffer::clone_from_slice(
-            source_image.as_raw(),
-            source_image.width(),
-            source_image.height(),
-        ),
-    ));
-
     ui.run()
 }
